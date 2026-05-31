@@ -26,6 +26,17 @@ namespace SIGEVAP.Views
         // ── Botón activo en sidebar ───────────────────────────
         private Button _btnActivo;
 
+        // ── Grupos del sidebar creados fuera del Designer ─────
+        private Button _btnGrpAdmin;
+        private Button _btnGrpVacaciones;
+        private Button _btnGrpReportes;
+        private FlowLayoutPanel _flpGrpAdmin;
+        private FlowLayoutPanel _flpGrpVacaciones;
+        private FlowLayoutPanel _flpGrpReportes;
+        private bool _grpAdminExpandido = true;
+        private bool _grpVacacionesExpandido = true;
+        private bool _grpReportesExpandido = true;
+
         // ── Timers ───────────────────────────────────────────
         private System.Windows.Forms.Timer _timerFade;
         private System.Windows.Forms.Timer _timerFecha;
@@ -42,12 +53,238 @@ namespace SIGEVAP.Views
         public FrmMenu()
         {
             InitializeComponent();
+            ConfigurarContenidoDinamico();
+            ConfigurarGruposNavegacion();
             AplicarEstilos();
             CargarSesion();
             ConfigurarEventos();
             CargarDashboard();
             IniciarFadeIn();
             IniciarReloj();
+        }
+
+        // ============================================================
+        // CONTROLES QUE EL DESIGNER NO PROCESA BIEN
+        // ============================================================
+        private void ConfigurarContenidoDinamico()
+        {
+            lblWelcomeSub.Size = new Size(760, 24);
+            ConfigurarCardsDashboard();
+            ConfigurarStatsDashboard();
+        }
+
+        private void ConfigurarCardsDashboard()
+        {
+            flpCards.SuspendLayout();
+            flpCards.Controls.Clear();
+
+            var cards = new[] { cardEmpleados, cardSolicitudes, cardReportes, cardUsuarios, cardRoles, cardBitacoras };
+            var titulos = new[] { lblCardEmpTitulo, lblCardSolTitulo, lblCardRepTitulo, lblCardUsTitulo, lblCardRolTitulo, lblCardBitTitulo };
+            var descripciones = new[] { lblCardEmpDesc, lblCardSolDesc, lblCardRepDesc, lblCardUsDesc, lblCardRolDesc, lblCardBitDesc };
+            string[] textosTitulo = { "Empleados", "Solicitudes", "Reportes", "Usuarios", "Roles y Permisos", "Bitácoras" };
+            string[] textosDescripcion = { "Gestión de empleados", "Aprobar o rechazar", "Reportes dinámicos", "Control de acceso", "Configuración de accesos", "Registro de actividad" };
+            string[] nombres = { "cardEmpleados", "cardSolicitudes", "cardReportes", "cardUsuarios", "cardRoles", "cardBitacoras" };
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cards[i].BackColor = C_CARD;
+                cards[i].Margin = new Padding(0, 0, 14, 14);
+                cards[i].Name = nombres[i];
+                cards[i].Size = new Size(210, 104);
+                cards[i].Cursor = Cursors.Hand;
+                cards[i].Controls.Clear();
+
+                titulos[i].AutoSize = true;
+                titulos[i].BackColor = Color.Transparent;
+                titulos[i].Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                titulos[i].ForeColor = C_TEXTO;
+                titulos[i].Location = new Point(14, 14);
+                titulos[i].Text = textosTitulo[i];
+                cards[i].Controls.Add(titulos[i]);
+
+                descripciones[i].AutoSize = false;
+                descripciones[i].BackColor = Color.Transparent;
+                descripciones[i].Font = new Font("Segoe UI", 8F);
+                descripciones[i].ForeColor = C_SUBTEXTO;
+                descripciones[i].Location = new Point(14, 34);
+                descripciones[i].Size = new Size(182, 48);
+                descripciones[i].Text = textosDescripcion[i];
+                cards[i].Controls.Add(descripciones[i]);
+
+                flpCards.Controls.Add(cards[i]);
+            }
+
+            flpCards.Height = 260;
+            flpCards.ResumeLayout(false);
+        }
+
+        private void ConfigurarStatsDashboard()
+        {
+            flpStats.SuspendLayout();
+            flpStats.Controls.Clear();
+
+            var stats = new[] { statEmpleados, statPendientes, statAprobadas, statUsuarios };
+            var valores = new[] { lblStatEmpVal, lblStatPenVal, lblStatAprVal, lblStatUsVal };
+            var etiquetas = new[] { lblStatEmpLbl, lblStatPenLbl, lblStatAprLbl, lblStatUsLbl };
+            string[] textos = { "Empleados activos", "Solicitudes pendientes", "Solicitudes aprobadas", "Usuarios activos" };
+            string[] nombres = { "statEmpleados", "statPendientes", "statAprobadas", "statUsuarios" };
+
+            for (int i = 0; i < stats.Length; i++)
+            {
+                stats[i].BackColor = C_CARD;
+                stats[i].Margin = new Padding(0, 0, 14, 0);
+                stats[i].Name = nombres[i];
+                stats[i].Size = new Size(170, 70);
+                stats[i].Controls.Clear();
+
+                valores[i].AutoSize = true;
+                valores[i].BackColor = Color.Transparent;
+                valores[i].Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+                valores[i].ForeColor = C_AMARILLO;
+                valores[i].Location = new Point(14, 8);
+                valores[i].Text = "0";
+                stats[i].Controls.Add(valores[i]);
+
+                etiquetas[i].AutoSize = false;
+                etiquetas[i].BackColor = Color.Transparent;
+                etiquetas[i].Font = new Font("Segoe UI", 7.5F);
+                etiquetas[i].ForeColor = C_SUBTEXTO;
+                etiquetas[i].Location = new Point(14, 38);
+                etiquetas[i].Size = new Size(142, 24);
+                etiquetas[i].Text = textos[i];
+                stats[i].Controls.Add(etiquetas[i]);
+
+                flpStats.Controls.Add(stats[i]);
+            }
+
+            flpStats.Height = 104;
+            flpStats.ResumeLayout(false);
+        }
+
+        private void ConfigurarGruposNavegacion()
+        {
+            _btnGrpAdmin = CrearBotonGrupo("ADMINISTRACIÓN");
+            _btnGrpVacaciones = CrearBotonGrupo("VACACIONES");
+            _btnGrpReportes = CrearBotonGrupo("REPORTES");
+
+            _flpGrpAdmin = CrearPanelGrupo("flpGrpAdmin", btnNavEmpleados, btnNavUsuarios, btnNavRoles, btnNavTiposPermiso);
+            _flpGrpVacaciones = CrearPanelGrupo("flpGrpVacaciones", btnNavSolicitar, btnNavGestion);
+            _flpGrpReportes = CrearPanelGrupo("flpGrpReportes", btnNavReportes, btnNavBitacoras);
+
+            _btnGrpAdmin.Click += (s, e) => AlternarGrupo(ref _grpAdminExpandido, _btnGrpAdmin, _flpGrpAdmin);
+            _btnGrpVacaciones.Click += (s, e) => AlternarGrupo(ref _grpVacacionesExpandido, _btnGrpVacaciones, _flpGrpVacaciones);
+            _btnGrpReportes.Click += (s, e) => AlternarGrupo(ref _grpReportesExpandido, _btnGrpReportes, _flpGrpReportes);
+
+            flpNav.SuspendLayout();
+            flpNav.Controls.Clear();
+            flpNav.Controls.Add(lblSecGeneral);
+            flpNav.Controls.Add(btnNavInicio);
+            flpNav.Controls.Add(_btnGrpAdmin);
+            flpNav.Controls.Add(_flpGrpAdmin);
+            flpNav.Controls.Add(_btnGrpVacaciones);
+            flpNav.Controls.Add(_flpGrpVacaciones);
+            flpNav.Controls.Add(_btnGrpReportes);
+            flpNav.Controls.Add(_flpGrpReportes);
+            flpNav.Controls.Add(lblSecSistema);
+            flpNav.Controls.Add(btnNavAyuda);
+            flpNav.Controls.Add(btnNavAcercaDe);
+            flpNav.Controls.Add(btnNavCerrarSesion);
+            flpNav.Controls.Add(btnNavSalir);
+            flpNav.ResumeLayout(true);
+
+            ActualizarGruposNavegacion();
+        }
+
+        private Button CrearBotonGrupo(string texto)
+        {
+            var btn = new Button();
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(30, 30, 30);
+            btn.BackColor = Color.Transparent;
+            btn.ForeColor = Color.FromArgb(95, 95, 95);
+            btn.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            btn.Size = new Size(204, 34);
+            btn.Margin = new Padding(8, 8, 0, 1);
+            btn.TextAlign = ContentAlignment.MiddleLeft;
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+            btn.Tag = texto;
+            return btn;
+        }
+
+        private FlowLayoutPanel CrearPanelGrupo(string nombre, params Button[] botones)
+        {
+            var panel = new FlowLayoutPanel();
+            panel.AutoSize = false;
+            panel.BackColor = Color.Transparent;
+            panel.FlowDirection = FlowDirection.TopDown;
+            panel.WrapContents = false;
+            panel.Margin = new Padding(0);
+            panel.Padding = new Padding(0);
+            panel.Name = nombre;
+            panel.Size = new Size(220, 0);
+
+            foreach (var btn in botones)
+            {
+                btn.Margin = new Padding(16, 1, 0, 1);
+                btn.Size = new Size(196, 34);
+                panel.Controls.Add(btn);
+            }
+
+            return panel;
+        }
+
+        private void AlternarGrupo(ref bool expandido, Button encabezado, FlowLayoutPanel panel)
+        {
+            expandido = !expandido;
+            ActualizarGrupo(encabezado, panel, expandido);
+        }
+
+        private void ActualizarGruposNavegacion()
+        {
+            if (_btnGrpAdmin == null) return;
+
+            ActualizarVisibilidadGrupo(_btnGrpAdmin, _flpGrpAdmin, _grpAdminExpandido);
+            ActualizarVisibilidadGrupo(_btnGrpVacaciones, _flpGrpVacaciones, _grpVacacionesExpandido);
+            ActualizarVisibilidadGrupo(_btnGrpReportes, _flpGrpReportes, _grpReportesExpandido);
+        }
+
+        private void ActualizarVisibilidadGrupo(Button encabezado, FlowLayoutPanel panel, bool expandido)
+        {
+            // Mantener el panel visible evita que Control.Visible devuelva false
+            // solo porque el padre está oculto. El colapso se maneja con Height.
+            panel.Visible = true;
+
+            bool tieneOpcionesVisibles = false;
+            foreach (Control ctrl in panel.Controls)
+            {
+                if (!ctrl.Visible) continue;
+                tieneOpcionesVisibles = true;
+                break;
+            }
+
+            encabezado.Visible = tieneOpcionesVisibles;
+            ActualizarGrupo(encabezado, panel, expandido && tieneOpcionesVisibles);
+        }
+
+        private void ActualizarGrupo(Button encabezado, FlowLayoutPanel panel, bool expandido)
+        {
+            string texto = encabezado.Tag?.ToString() ?? encabezado.Text.TrimStart('▾', '▸', ' ');
+            encabezado.Text = (expandido ? "▾  " : "▸  ") + texto;
+            panel.Height = expandido ? AltoGrupoVisible(panel) : 0;
+            panel.Margin = expandido ? new Padding(0, 0, 0, 4) : new Padding(0);
+        }
+
+        private int AltoGrupoVisible(FlowLayoutPanel panel)
+        {
+            int alto = 0;
+            foreach (Control ctrl in panel.Controls)
+            {
+                if (!ctrl.Visible) continue;
+                alto += ctrl.Height + ctrl.Margin.Top + ctrl.Margin.Bottom;
+            }
+            return alto;
         }
 
         // ============================================================
@@ -234,10 +471,10 @@ namespace SIGEVAP.Views
                     (btnNavBitacoras,    "BitacoraMovimientos"),
                 };
 
+                bool esAdmin = EsRolAdministrador();
                 foreach (var (btn, modulo) in mapa)
                 {
-                    bool acceso = _ctrlUsr.VerificarPermiso(modulo);
-                    btn.Visible = acceso;
+                    btn.Visible = esAdmin || _ctrlUsr.VerificarPermiso(modulo);
                 }
 
                 // Cards del dashboard según permisos
@@ -249,6 +486,14 @@ namespace SIGEVAP.Views
                 cardBitacoras.Visible = btnNavBitacoras.Visible;
             }
             catch { /* Si falla no bloquear el menú */ }
+
+            ActualizarGruposNavegacion();
+        }
+
+        private bool EsRolAdministrador()
+        {
+            return !string.IsNullOrWhiteSpace(SesionActual.NombreRol) &&
+                   SesionActual.NombreRol.IndexOf("admin", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         // ============================================================
