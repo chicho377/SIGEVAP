@@ -371,7 +371,7 @@
             this.lblWelcomeSub.Text = "Cargando información...";
 
             // ── flpCards ──────────────────────────────────────
-            this.flpCards.AutoSize = true;
+            this.flpCards.AutoSize = false;
             this.flpCards.BackColor = System.Drawing.Color.Transparent;
             this.flpCards.Dock = System.Windows.Forms.DockStyle.Top;
             this.flpCards.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
@@ -380,44 +380,8 @@
             this.flpCards.Padding = new System.Windows.Forms.Padding(0, 16, 0, 0);
             this.flpCards.Height = 220;
 
-            // Crear 6 cards
-            System.Windows.Forms.Panel[] cards = { cardEmpleados, cardSolicitudes, cardReportes, cardUsuarios, cardRoles, cardBitacoras };
-            System.Windows.Forms.Label[] titLbl = { lblCardEmpTitulo, lblCardSolTitulo, lblCardRepTitulo, lblCardUsTitulo, lblCardRolTitulo, lblCardBitTitulo };
-            System.Windows.Forms.Label[] desLbl = { lblCardEmpDesc, lblCardSolDesc, lblCardRepDesc, lblCardUsDesc, lblCardRolDesc, lblCardBitDesc };
-            string[] titulos = { "Empleados", "Solicitudes", "Reportes", "Usuarios", "Roles y Permisos", "Bitácoras" };
-            string[] descs = { "Gestión de empleados", "Aprobar o rechazar", "Reportes dinámicos", "Control de acceso", "Configuración de accesos", "Registro de actividad" };
-            string[] nameCard = { "cardEmpleados", "cardSolicitudes", "cardReportes", "cardUsuarios", "cardRoles", "cardBitacoras" };
-
-            for (int i = 0; i < cards.Length; i++)
-            {
-                cards[i].BackColor = System.Drawing.Color.FromArgb(22, 22, 22);
-                cards[i].Margin = new System.Windows.Forms.Padding(0, 0, 14, 14);
-                cards[i].Name = nameCard[i];
-                cards[i].Size = new System.Drawing.Size(200, 88);
-                cards[i].Cursor = System.Windows.Forms.Cursors.Hand;
-
-                titLbl[i].AutoSize = true;
-                titLbl[i].BackColor = System.Drawing.Color.Transparent;
-                titLbl[i].Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-                titLbl[i].ForeColor = System.Drawing.Color.White;
-                titLbl[i].Location = new System.Drawing.Point(14, 14);
-                titLbl[i].Text = titulos[i];
-                cards[i].Controls.Add(titLbl[i]);
-
-                desLbl[i].AutoSize = false;
-                desLbl[i].BackColor = System.Drawing.Color.Transparent;
-                desLbl[i].Font = new System.Drawing.Font("Segoe UI", 8F);
-                desLbl[i].ForeColor = System.Drawing.Color.FromArgb(80, 80, 80);
-                desLbl[i].Location = new System.Drawing.Point(14, 34);
-                desLbl[i].Size = new System.Drawing.Size(172, 36);
-                desLbl[i].Text = descs[i];
-                cards[i].Controls.Add(desLbl[i]);
-
-                this.flpCards.Controls.Add(cards[i]);
-            }
-
             // ── flpStats ──────────────────────────────────────
-            this.flpStats.AutoSize = true;
+            this.flpStats.AutoSize = false;
             this.flpStats.BackColor = System.Drawing.Color.Transparent;
             this.flpStats.Dock = System.Windows.Forms.DockStyle.Top;
             this.flpStats.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
@@ -425,39 +389,6 @@
             this.flpStats.Name = "flpStats";
             this.flpStats.Padding = new System.Windows.Forms.Padding(0, 14, 0, 0);
             this.flpStats.Height = 90;
-
-            System.Windows.Forms.Panel[] stats = { statEmpleados, statPendientes, statAprobadas, statUsuarios };
-            System.Windows.Forms.Label[] statVals = { lblStatEmpVal, lblStatPenVal, lblStatAprVal, lblStatUsVal };
-            System.Windows.Forms.Label[] statLbls = { lblStatEmpLbl, lblStatPenLbl, lblStatAprLbl, lblStatUsLbl };
-            string[] statEtiquetas = { "Empleados activos", "Solicitudes pendientes", "Solicitudes aprobadas", "Usuarios activos" };
-            string[] statNames = { "statEmpleados", "statPendientes", "statAprobadas", "statUsuarios" };
-
-            for (int i = 0; i < stats.Length; i++)
-            {
-                stats[i].BackColor = System.Drawing.Color.FromArgb(22, 22, 22);
-                stats[i].Margin = new System.Windows.Forms.Padding(0, 0, 14, 0);
-                stats[i].Name = statNames[i];
-                stats[i].Size = new System.Drawing.Size(150, 62);
-
-                statVals[i].AutoSize = true;
-                statVals[i].BackColor = System.Drawing.Color.Transparent;
-                statVals[i].Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-                statVals[i].ForeColor = System.Drawing.Color.FromArgb(245, 196, 0);
-                statVals[i].Location = new System.Drawing.Point(14, 8);
-                statVals[i].Text = "0";
-                stats[i].Controls.Add(statVals[i]);
-
-                statLbls[i].AutoSize = false;
-                statLbls[i].BackColor = System.Drawing.Color.Transparent;
-                statLbls[i].Font = new System.Drawing.Font("Segoe UI", 7.5F);
-                statLbls[i].ForeColor = System.Drawing.Color.FromArgb(80, 80, 80);
-                statLbls[i].Location = new System.Drawing.Point(14, 38);
-                statLbls[i].Size = new System.Drawing.Size(122, 16);
-                statLbls[i].Text = statEtiquetas[i];
-                stats[i].Controls.Add(statLbls[i]);
-
-                this.flpStats.Controls.Add(stats[i]);
-            }
 
             // ── Reanudar layout ───────────────────────────────
             ((System.ComponentModel.ISupportInitialize)(this.picLogoSb)).EndInit();
